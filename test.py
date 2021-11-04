@@ -6,8 +6,15 @@ def createGlyph():
     g.stroke((0, -10))
 
     g.stroke((-15, 0))
-
-    # need to figure out how to have the glyph auto call save at the end of the glyph 
+ 
     g.end()
 
-createGlyph()
+def testGlyph():
+    g = Glyph()
+
+    g.create_stroke((0, -10))
+    g.create_stroke((-15, 0))
+
+    g.end()
+
+testGlyph()

@@ -1,7 +1,5 @@
 import svgwrite
 
-center = (0, 0)
-
 class Point:
     def __init__(self, coords, glyph):
         self.coords = coords
@@ -40,6 +38,10 @@ class Glyph:
         p = Point(coords, self)
         self.points.append(p)
 
+    def init_point(self, coords):
+        p = Point(coords, self)
+        return p 
+
     def stroke(self, line):
         initPoint = self.points[-1]
         index = self.points.index(initPoint)
@@ -48,6 +50,19 @@ class Glyph:
         self.create_point(n)
 
         initPoint.drawTo(self.points[index + 1]) 
+
+    def create_stroke(self, line):
+        initPoint = self.points[-1]
+        p = (initPoint.x + 1, initPoint.y)
+        if line[0] > 0:
+            p = (initPoint.x - 1, initPoint.y)
+        
+        initPoint = self.init_point(p)
+
+        n = (initPoint.x + line[0], initPoint.y)
+        self.create_point(n)
+
+        initPoint.drawTo(self.points[-1])
 
     def end(self):
         self.g.save()
