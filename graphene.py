@@ -17,8 +17,7 @@ class Point:
 class Glyph:
     def __init__(self, filename='test.svg', size=('50px', '50px')):
         self.g = svgwrite.Drawing(filename, size)
-        self.origin = self.get_center(size)
-        self.points = [self.origin]
+        self.last_point = self.get_center(size)
 
     def parse_size(self, size):
         n = size[0].replace('p', '')
@@ -34,35 +33,25 @@ class Glyph:
         center_point = Point(center, self)
         return center_point
 
-    def create_point(self, coords): 
-        p = Point(coords, self)
-        self.points.append(p)
-
     def init_point(self, coords):
         p = Point(coords, self)
         return p 
 
-    def stroke(self, line):
-        initPoint = self.points[-1]
-        index = self.points.index(initPoint)
+    def invert_stroke_vector(self, vector):
+        new = (vector[0], vector[1] * -1)
+        return new
 
-        n = ((initPoint.x + line[0]), initPoint.y + line[1])
-        self.create_point(n)
+    def stroke(self, vector):
+        new_vec = self.invert_stroke_vector(vector)
+        init_point = self.init_point((self.last_point.x + 0.5, self.last_point.y))
+        if new_vec[0] > 0:
+            init_point = self.init_point((self.last_point.y + 0.5, self.last_point.y))
 
-        initPoint.drawTo(self.points[index + 1]) 
+        n = (init_point.x + new_vec[0], init_point.y + new_vec[1])
+        new_point = Point(n, self)
 
-    def create_stroke(self, line):
-        initPoint = self.points[-1]
-        p = (initPoint.x + 1, initPoint.y)
-        if line[0] > 0:
-            p = (initPoint.x - 1, initPoint.y)
-        
-        initPoint = self.init_point(p)
-
-        n = (initPoint.x + line[0], initPoint.y)
-        self.create_point(n)
-
-        initPoint.drawTo(self.points[-1])
+        init_point.drawTo(new_point)
+        self.last_point = new_point
 
     def end(self):
         self.g.save()
@@ -75,3 +64,10 @@ class Glyph:
         for p in self.points:
             p.printSelf()
 
+class GlyphBlock(Glyph):
+    def __init__(self, glyphs=2, gFilename='test.svg', gSize=('50px', '50px')):
+        Glyph.__init__(self, gFilename, gSize)
+        self.glyphs = glyphs
+
+    def create_quadrants(self):
+        print('work in progress')
