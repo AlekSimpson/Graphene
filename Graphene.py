@@ -52,10 +52,8 @@ class Canvas:
             p = self.lines[point_change[2]].final 
             new_point = Point(p.x + point_change[0], p.y + point_change[1])
             if point_change != (0, 0, 0): 
-                print("point change != None")
                 last_point = new_point
             else:
-                print("point change == None")
                 last_point = self.lines[-1].final 
 
         line = Line(vector, last_point)
@@ -80,14 +78,13 @@ class Canvas:
     def fin(self, filename):
         size = self.get_dims()
         #size_str = (str(size.x) + "px", str(size.y) + "px")
-        size_str = ("50px", "50px")
-        
+        size_str = ("15px", "15px")
+
         self.filename = filename 
         glyph = svgwrite.Drawing(self.filename, size_str)
         #init_point = self.get_init_point(size)
-        init_point = Point(25, 25)
-
-
+        init_point = self.get_init_point(Point(15, 15))
+        print(init_point.tuple())
         for line in self.lines:
             temp = self.draw_line(glyph, line.vector, init_point)
             init_point = temp
